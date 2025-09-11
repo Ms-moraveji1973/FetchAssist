@@ -5,7 +5,7 @@ This project provides a simple API and tools to **bypass reCAPTCHA** and **Cloud
 
 ---
 
-## ✨ Features
+## Features
 - Solve **Cloudflare challenges** with `cloudscraper`  
 - Handle **Google reCAPTCHA** using Selenium  
 - FastAPI endpoints to integrate with other applications  
@@ -13,12 +13,12 @@ This project provides a simple API and tools to **bypass reCAPTCHA** and **Cloud
 
 ---
 
-## ⚙️ Requirements
+## Requirements
 - Python **3.9+**
 
 ---
 
-## 📦 Installation
+## Installation
 Clone the repository and install dependencies:
 
 ```bash
