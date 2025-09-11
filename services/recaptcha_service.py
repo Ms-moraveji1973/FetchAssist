@@ -9,12 +9,16 @@ def recaptcha(url:str,website_key: str):
         raise ValueError("url or website_key is required")
     try :
         print(" We're trying to solve the recaptcha challenge ")
+        # install chrome driver for communicate with selenium
         driver = webdriver.Chrome(ChromeDriverManager().install())
+        # connect our driver to solve captcha
         solver = RecaptchaSolver(driver=driver)
         driver.get(url)
+        # find reCAPTCHA in website
         recaptcha_iframe = driver.find_element(By.XPATH, '//iframe[@title="reCAPTCHA"]')
         solver.click_recaptcha_v2(iframe=recaptcha_iframe)
         print('Congratulations....!!!,CAPTCHA solved')
+        # get token-captcha from g-recaptcha-response
         g_response_element = driver.find_element(By.ID, "g-recaptcha-response")
         g_response = ""
         while len(g_response) < 100 :

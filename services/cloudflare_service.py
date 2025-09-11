@@ -1,5 +1,6 @@
 import cloudscraper
 
+# making a request using cloudscraper
 def cloudflare(url:str):
     print('this function is called')
     scraper = cloudscraper.create_scraper()

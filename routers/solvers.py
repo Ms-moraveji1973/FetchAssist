@@ -4,6 +4,7 @@ from schema import Recaptcha , CloudFlare
 import requests
 router = APIRouter(prefix='/solver')
 
+# return token-captcha
 @router.post('/recaptchaV2')
 def recaptchaV2(URL_and_WebisteKey:Recaptcha):
     try:
@@ -13,6 +14,7 @@ def recaptchaV2(URL_and_WebisteKey:Recaptcha):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
+# return content and status
 @router.post('/cloudflare')
 def cloudflare(URL:CloudFlare):
     try:
