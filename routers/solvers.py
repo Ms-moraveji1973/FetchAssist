@@ -6,9 +6,9 @@ router = APIRouter(prefix='/solver')
 
 # return token-captcha
 @router.post('/recaptchaV2')
-def recaptchaV2(URL_and_WebisteKey:Recaptcha):
+def recaptchaV2(URL:Recaptcha):
     try:
-        response  = recaptcha_service.recaptcha(str(URL_and_WebisteKey.url),URL_and_WebisteKey.website_key)
+        response  = recaptcha_service.recaptcha(str(URL.url))
         if response :
             return {'token':response}
     except Exception as e:
