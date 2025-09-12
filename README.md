@@ -18,9 +18,16 @@ This project provides a simple API and tools to **bypass reCAPTCHA** and **Cloud
 
 ---
 
-## Installation
+## Installation and Run Project
 Clone the repository and install dependencies:
 
 ```bash
+python -m venv venv
+source venv/bin/activate 
 pip install -r requirements.txt
+```
+
+## Run
+```bash
+fastapi dev main.py
 ```
