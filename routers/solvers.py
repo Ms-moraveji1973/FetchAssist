@@ -1,21 +1,14 @@
 from fastapi import APIRouter ,status, HTTPException , Depends
 from services import cloudflare_service , recaptcha_service
 from schema import Recaptcha , CloudFlare
-from typing import Annotated , List
+from typing import Annotated
 from sqlalchemy.orm import Session
 import requests
 
 # internal package
-from database import SessionLocal
+from database import get_db
 
 router = APIRouter(prefix='/solver')
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally :
-        db.close()
 
 # return token-captcha
 @router.post('/recaptchaV2')
