@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Advanced Logs Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-color: #0d1117;
+      --card-color: #161b22;
+      --border-color: #30363d;
+      --text-primary: #c9d1d9;
+      --text-secondary: #8b949e;
+      --accent-primary: #58a6ff;
+      --accent-secondary: #3fb950;
+      --accent-danger: #f85149;
+      --success-glow: rgba(63, 185, 80, 0.2);
+      --failed-glow: rgba(248, 81, 73, 0.2);
+      --accent-glow: rgba(88, 166, 255, 0.3);
+    }
+
+    @keyframes background-pan {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes slideInFade {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0d1117, #1f2c3b, #0d1117);
+      background-size: 200% 200%;
+      animation: background-pan 20s linear infinite;
+      color: var(--text-primary);
+      margin: 0;
+      padding: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--text-primary);
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 40px;
+    }
+    h1 i {
+      color: var(--accent-primary);
+      margin-right: 10px;
+    }
+
+    .stats-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: var(--card-color);
+      padding: 25px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      min-width: 200px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 30px var(--accent-glow);
+    }
+    .stat-card .icon {
+      font-size: 28px;
+      color: var(--accent-primary);
+      margin-bottom: 10px;
+    }
+    .stat-card h3 {
+      margin: 0 0 5px 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 400;
+    }
+    .stat-card p {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .logs-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card-color);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      word-wrap: break-word;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: slideInFade 0.5s ease-out forwards;
+    }
+    .card.success-border:hover { box-shadow: 0 0 20px var(--success-glow); }
+    .card.failed-border:hover { box-shadow: 0 0 20px var(--failed-glow); }
+    .card:hover { transform: translateY(-5px); }
+
+    .card h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+      color: var(--accent-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .card-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+        font-size: 14px;
+    }
+    .card-item span {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    .status::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+    .success { background: rgba(63, 185, 80, 0.1); color: var(--accent-secondary); }
+    .success::before { background-color: var(--accent-secondary); }
+    .failed { background: rgba(248, 81, 73, 0.1); color: var(--accent-danger); }
+    .failed::before { background-color: var(--accent-danger); }
+
+    .error {
+      font-size: 13px;
+      color: #ff9999;
+      background-color: rgba(248, 81, 73, 0.05);
+      white-space: pre-wrap;
+      max-height: 150px;
+      overflow-y: auto;
+      border-left: 3px solid var(--accent-danger);
+      padding: 10px;
+      border-radius: 4px;
+      font-family: 'Courier New', Courier, monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1><i class="fa-solid fa-chart-line"></i>Live Logs Dashboard</h1>
+
+  <div class="stats-container" id="stats"></div>
+  <div class="logs-container" id="logs"></div>
+
+  <script>
+    const renderedLogIds = new Set();
+
+    function animateValue(obj, start, end, duration, suffix = '') {
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        let currentValue;
+        if (Number.isFinite(end) && end % 1 !== 0) {
+            currentValue = (progress * (end - start) + start).toFixed(2);
+        } else {
+            currentValue = Math.floor(progress * (end - start) + start);
+        }
+        obj.innerHTML = currentValue + suffix;
+        if (progress < 1) window.requestAnimationFrame(step);
+      };
+      window.requestAnimationFrame(step);
+    }
+
+    function safeParseFloat(value) {
+      const num = parseFloat((value || '').replace(/[^0-9.]/g, ''));
+      return isNaN(num) ? 0 : num;
+    }
+    function safeParseInt(value) {
+      const num = parseInt((value || '').replace(/[^0-9]/g, ''));
+      return isNaN(num) ? 0 : num;
+    }
+
+    async function loadData() {
+      try {
+        const res = await fetch("http://127.0.0.1:8000/dashboard/stats");
+        const data = await res.json();
+
+        const statsContainer = document.getElementById("stats");
+        if (statsContainer.innerHTML === "") {
+          statsContainer.innerHTML = `
+            <div class="stat-card">
+              <div class="icon"><i class="fa-solid fa-globe"></i></div>
+              <h3>Total Requests</h3>
+              <p id="total-requests">${data.stats.total}</p>
+            </div>
+            <div class="stat-card">
+              <div class="icon"><i class="fa-solid fa-check-circle"></i></div>
+              <h3>Success</h3>
+              <p id="total-success">${data.stats.success}</p>
+            </div>
+            <div class="stat-card">
+              <div class="icon"><i class="fa-solid fa-bullseye"></i></div>
+              <h3>Win Rate</h3>
+              <p id="win-rate">${data.stats.win_rate}%</p>
+            </div>
+            <div class="stat-card">
+              <div class="icon"><i class="fa-solid fa-hourglass-half"></i></div>
+              <h3>Avg Duration</h3>
+              <p id="avg-duration">${data.stats.duration_average}s</p>
+            </div>
+          `;
+        } else {
+          const totalEl = document.getElementById("total-requests");
+          const successEl = document.getElementById("total-success");
+          const winRateEl = document.getElementById("win-rate");
+          const avgDurationEl = document.getElementById("avg-duration");
+
+          animateValue(totalEl, safeParseInt(totalEl.innerText), data.stats.total, 500);
+          animateValue(successEl, safeParseInt(successEl.innerText), data.stats.success, 500);
+          animateValue(winRateEl, safeParseFloat(winRateEl.innerText), data.stats.win_rate, 500, '%');
+          animateValue(avgDurationEl, safeParseFloat(avgDurationEl.innerText), data.stats.duration_average, 500, 's');
+        }
+
+        const logsContainer = document.getElementById("logs");
+        data.logs.reverse().forEach(log => {
+          const logId = log.id;
+          if (!renderedLogIds.has(logId)) {
+            const card = document.createElement("div");
+            const hasError = !!log.error_message;
+            card.className = `card ${hasError ? 'failed-border' : 'success-border'}`;
+
+            const statusBadge = hasError
+              ? `<span class="status failed">Failed</span>`
+              : `<span class="status success">Success</span>`;
+
+            card.innerHTML = `
+              <h2><i class="fa-solid fa-link"></i> ${log.website_url}</h2>
+              <div class="card-item">
+                <i class="fa-solid fa-clock"></i> Duration: <span>${log.duration.toFixed(2)}s</span>
+              </div>
+              <div class="card-item">
+                <i class="fa-solid fa-info-circle"></i> Status: ${statusBadge}
+              </div>
+              ${hasError ? `<div class="error">${log.error_message}</div>` : ""}
+            `;
+
+            logsContainer.prepend(card);
+            renderedLogIds.add(logId);
+          }
+        });
+
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    }
+
+    loadData();
+    setInterval(loadData, 5000);
+  </script>
+</body>
+</html>
