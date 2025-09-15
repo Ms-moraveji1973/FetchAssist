@@ -1,9 +1,10 @@
-from fastapi import APIRouter ,status, HTTPException , Depends
-from services import cloudflare_service , recaptcha_service
-from schema import Recaptcha , CloudFlare
+from fastapi import APIRouter ,status, HTTPException , Depends , UploadFile
+from services import cloudflare_service , recaptcha_service , image_captcha_service
+from schema import UrlSchema
 from typing import Annotated
 from sqlalchemy.orm import Session
 import requests
+import aiofiles
 
 # internal package
 from database import get_db
@@ -12,7 +13,7 @@ router = APIRouter(prefix='/solver')
 
 # return token-captcha
 @router.post('/recaptchaV2')
-def recaptchaV2(db:Annotated[Session,Depends(get_db)],URL:Recaptcha):
+def recaptchaV2(db:Annotated[Session,Depends(get_db)],URL:UrlSchema):
     try:
         response  = recaptcha_service.recaptcha(db,str(URL.url))
         if response :
@@ -22,7 +23,7 @@ def recaptchaV2(db:Annotated[Session,Depends(get_db)],URL:Recaptcha):
 
 # return content and status
 @router.post('/cloudflare')
-def cloudflare(URL:CloudFlare):
+def cloudflare(URL:UrlSchema):
     try:
         content , status = cloudflare_service.cloudflare(str(URL.url))
         if content and status :
@@ -31,9 +32,31 @@ def cloudflare(URL:CloudFlare):
         raise HTTPException(status_code=status, detail=str(e))
 
 @router.post('/request_test')
-def cloudflare_test(URL:CloudFlare):
+def cloudflare_test(URL:UrlSchema):
     res = requests.get(str(URL.url)).status_code
     if res :
         return {'status':res}
     else :
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=("can't find your website"))
+
+
+@router.post('/image_path')
+def image_processing(URL:UrlSchema):
+    return  image_captcha_service.image_processing(str(URL.url))
+
+
+@router.post("/uploadfile/")
+async def create_upload_file(image: UploadFile):
+    output_image = "images/main.png"
+    async with aiofiles.open(output_image, 'wb') as out_file:
+        content = await image.read()  # async read
+        await out_file.write(content)  # async write
+
+    return image_captcha_service.image_processing(output_image)
+
+
+
+
+
+
+

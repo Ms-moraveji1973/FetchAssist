@@ -2,7 +2,7 @@ from fastapi import APIRouter ,status, HTTPException , Depends
 from typing import Annotated , List
 from sqlalchemy.orm import Session
 
-
+# internal package
 from database import get_db
 import models
 from services.stats_service import calculate_stats

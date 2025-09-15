@@ -1,10 +1,7 @@
 from pydantic import BaseModel , HttpUrl
 from typing import Optional
 
-class Recaptcha(BaseModel):
-    url : HttpUrl
-
-class CloudFlare(BaseModel):
+class UrlSchema(BaseModel):
     url : HttpUrl
 
 class LogSchema(BaseModel):
