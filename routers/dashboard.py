@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 import models
-from services.stats import calculate_stats
+from services.stats_service import calculate_stats
 
 router = APIRouter(prefix='/dashboard', tags=['dashboard'])
 
