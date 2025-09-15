@@ -39,13 +39,7 @@ def cloudflare_test(URL:UrlSchema):
     else :
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=("can't find your website"))
 
-
-@router.post('/image_path')
-def image_processing(URL:UrlSchema):
-    return  image_captcha_service.image_processing(str(URL.url))
-
-
-@router.post("/uploadfile/")
+@router.post("/image_captcha/")
 async def create_upload_file(image: UploadFile):
     output_image = "images/main.png"
     async with aiofiles.open(output_image, 'wb') as out_file:
